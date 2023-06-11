@@ -33,7 +33,6 @@ function showLogo(svg, teamData, i) {
     mouseon(teams_logo)
     mouseoff(teams_logo)
     click_logo(teams_logo, processedData.team)
-    console.log(i)
 
     // 全局图标
     if (i == 19) {
@@ -70,9 +69,10 @@ function mouseoff(target) {
 }
 
 function click_logo(target, team) {
-        target.on('click', () => {
-            getAllPic(team)
-})}
+    target.on('click', () => {
+        getAllPic(team)
+    })
+}
 
 function click_pano(svg, target) {
     target.on('click', () => {
