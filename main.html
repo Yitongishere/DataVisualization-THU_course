@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Assignment1</title>
+    <script src="d3.min.js"></script>
+    <script src="d3-v6-tip.js"></script>
+    <script src="jquery-3.4.1.min.js"></script>
+    <script src="gen_pie.js"></script>
+    <script src="portal.js"></script>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script> -->
+    <link rel="stylesheet" href="d3-tip.css">
+</head>
+
+<body>
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        
+        .svg {
+            position: relative;
+            top: 0px;
+            left: 0px;
+            border: 1px solid black;
+        }
+        
+        .g {
+            border: 1px solid pink;
+        }
+        
+        .pie {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .pie path {
+            stroke: #fff;
+            stroke-width: 2px;
+            transition: fill 0.3s ease;
+        }
+        
+        .pie .label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .pie .tooltip {
+            position: absolute;
+            background-color: #000;
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+    <div id="buttons">
+        <button id="btnA">绘制胜平负饼图</button>
+        <button id="btnB">绘制赔率预期图</button>
+        <button id="btnC">绘制射门转化率图</button>
+        <button id="btnD">按xx排序</button>
+        <button id="btnE">按xx排序2</button>
+        <button id="btnF">首页</button>
+    </div>
+
+    <div id="imgs">
+        <img style="margin: 10px;">
+    </div>
+
+    <select id="mySelect">
+        <option value="Crystal Palace" selected>Crystal Palace</option>
+        <option value="Arsenal">Arsenal</option>
+        <option value="Fulham">Fulham</option>
+    </select>
+
+    <script>
+        size = 160;
+        svg_width = 1000;
+
+        let listData;
+        let dictData;
+
+        async function loadData() {
+            try {
+                dictData = await d3.json("data.json");
+                listData = Object.values(dictData);
+            } catch (error) {
+                console.error("读取数据失败:", error);
+            }
+        }
+
+        loadData();
+
+        const svg = d3.select("body")
+            .append("svg")
+            .attr("width", 1000)
+            .attr("height", 2500)
+            .attr("class", "svg");
+
+        d3.select("#btnA").on("click", () => {
+            svg.selectAll("*").remove();
+            listData.forEach((d, i) => {
+                var plot_data = {
+                    ...d,
+                    plot_i: i,
+                };
+                drawWLDPie(svg, plot_data);
+            });
+        });
+
+        d3.select("#btnB").on("click", () => {
+            svg.selectAll("*").remove();
+            listData.forEach((d, i) => {
+                var plot_data = {
+                    ...d,
+                    plot_i: i,
+                };
+                drawODDPie(svg, plot_data);
+            });
+        });
+
+        d3.select("#btnC").on("click", () => {
+            svg.selectAll("*").remove();
+            listData.forEach((d, i) => {
+                var plot_data = {
+                    ...d,
+                    plot_i: i,
+                };
+                drawGoalPie(svg, plot_data);
+
+            });
+
+        });
+
+        d3.select("#btnD").on("click", () => {
+            // 假设有个方法返回了每个球队的排序
+            var order = [2, 19, 5, 18, 17, 7, 6, 15, 16, 8, 9, 3, 13, 14, 10, 11, 4, 12, 1, 0];
+            changeOrder(svg, order);
+        });
+        d3.select("#btnE").on("click", () => {
+            // 假设有个方法返回了每个球队的排序
+            var order = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+            changeOrder(svg, order);
+        });
+
+        d3.select("#btnF").on("click", () => {
+            svg.selectAll("*").remove();
+            listData.forEach((d, i) => {
+                var plot_data = {
+                    ...d,
+                    plot_i: i,
+                };
+                showLogo(svg, plot_data, i)
+            });
+        })
+    </script>
+    <script src="team.js"></script>
+
+</body>
