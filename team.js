@@ -22,12 +22,13 @@ function getAllPic(team) {
     drawGoalPie(svg, teamData)
 
     //4. 包含阿森纳的比赛的平均赔率柱状图
+    // console.log(teamData['smallOddAvg'], parseFloat(teamData['winOddAvg']), parseFloat(teamData['winOddAvg']).toFixed(4))
     const data = {
-        wins: 2.8181,
-        losses: 1.4262,
-        draws: 0.9953,
-        big: 4.2651,
-        small: 3.4542
+        wins: parseFloat(teamData['winOddAvg'].toFixed(4)),
+        losses: parseFloat(teamData['loseOddAvg'].toFixed(4)),
+        draws: parseFloat(teamData['drawOddAvg'].toFixed(4)),
+        big: parseFloat(teamData['bigOddAvg'].toFixed(4)),
+        small: parseFloat(teamData['smallOddAvg'].toFixed(4)),
     };
 
     const chartWidth = 300;
