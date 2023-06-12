@@ -8,6 +8,7 @@
     <script src="jquery-3.4.1.min.js"></script>
     <script src="gen_pie.js"></script>
     <script src="portal.js"></script>
+    <script src="gen_profit.js"></script>
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script> -->
     <link rel="stylesheet" href="d3-tip.css">
@@ -72,6 +73,7 @@
         <button id="btnD">按xx排序</button>
         <button id="btnE">按xx排序2</button>
         <button id="btnF">首页</button>
+        <button id="btnG">test</button>
     </div>
 
     <div id="imgs">
@@ -164,6 +166,11 @@
                 showLogo(svg, plot_data, i)
             });
         })
+
+        d3.select("#btnG").on("click", () => {
+            svg.selectAll("*").remove();
+            drawProfitLine(svg, dictData, "Arsenal")
+        });
     </script>
     <script src="team.js"></script>
 
