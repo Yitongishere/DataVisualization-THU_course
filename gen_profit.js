@@ -1,4 +1,4 @@
-function drawProfitLine(svg, dictData, teamname, strategy) {
+function drawProfitLine(svg, dictData, teamname) {
     // console.log(dictData[teamname]['date'])
     // console.log(dictData[teamname]["winDetails"])
 
@@ -12,8 +12,9 @@ function drawProfitLine(svg, dictData, teamname, strategy) {
     console.log(games)
     
     let capital_per_1 = 100
-    let profit_record = get_profit_record(capital_per_1, games, strategy)
-    console.log("profit_record", profit_record)
+    let profit_record_expected = get_profit_record(capital_per_1, games, "expected")
+    let profit_record_unexpected = get_profit_record(capital_per_1, games, "unexpected")
+    let profit_record_middle = get_profit_record(capital_per_1, games, "middle")
 
     function get_profit_record(capital_per_1, games, strategy) {
         // 每次都投注赔率最看好的方向
@@ -59,21 +60,51 @@ function drawProfitLine(svg, dictData, teamname, strategy) {
     const xScale = d3.scaleLinear();
     const yScale = d3.scaleLinear();
 
-    xScale.domain([0,38]).range([100, 500]).nice();
-    yScale.domain([-2000, 2000]).range([500, 100]).nice();
+    xScale.domain([1,38]).range([100, 500]).nice();
+    yScale.domain([-2500, 2500]).range([500, 100]).nice();
     const xAxis = d3.axisBottom(xScale)
     const yAxis = d3.axisLeft(yScale);
     const xAxisGroup = svg.append('g').attr('id', 'xAxisGroup').call(xAxis).attr('transform', `translate(0, 300)`);
     const yAxisGroup = svg.append('g').attr('id', 'yAxisGroup').call(yAxis).attr('transform', `translate(100, 0)`);
+    // 添加图表标题
+    svg.append("text").attr("x", 300).attr("y", 80).attr("text-anchor", "middle").text("投注回报走势图");
+    // 添加X轴标签
+    svg.append("text").attr("x", 535).attr("y", 310).attr("text-anchor", "middle").text("联赛轮次");
+    // 添加Y轴标签
+    svg.append("text").attr("x", 100).attr("y", 80).attr("text-anchor", "middle").text("收益");
 
     round = []
     for(i = 1; i <= dates.length; i++) {
         round.push(i)
     }
 
-    const line = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record[i]))
-    console.log(line)
-    line.curve(d3.curveLinear);
-    svg.append('path').datum(round, profit_record).attr('fill', 'none')
-    .attr('d', line).attr('stroke', 'black').attr('stroke-width', '1px');
+    const line_expected = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_expected[i]))
+    svg.append('path').datum(round, profit_record_expected).attr('fill', 'none')
+    .attr('d', line_expected).attr('stroke', 'green').attr('stroke-width', '1px');
+    svg.selectAll("circle")
+    .data(profit_record_expected)
+    .enter()
+    .append("circle")
+    .attr("cx", function(d, i) { return xScale(round[i]) })
+    .attr("cy", function(d, i) { return yScale(profit_record_expected[i]) })
+    .attr("r", 2)
+    .attr("fill", "blue")
+    .on("mouseover", function(d) {
+        d3.select(this)
+            .attr("r", 4) // 鼠标悬停时增大圆点半径
+            .attr("fill", "red"); // 鼠标悬停时改变圆点颜色
+    })
+    .on("mouseout", function(d) {
+        d3.select(this)
+            .attr("r", 2)
+            .attr("fill", "blue");
+    });
+
+    const line_unexpected = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_unexpected[i]))
+    svg.append('path').datum(round, profit_record_unexpected).attr('fill', 'none')
+    .attr('d', line_unexpected).attr('stroke', 'red').attr('stroke-width', '1px');
+
+    const line_middle = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_middle[i]))
+    svg.append('path').datum(round, profit_record_middle).attr('fill', 'none')
+    .attr('d', line_middle).attr('stroke', 'orange').attr('stroke-width', '1px');
 }

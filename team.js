@@ -36,7 +36,7 @@ function getAllPic(team) {
 
     // 创建绘图区域
     const chart = svg.append("g")
-        .attr("transform", `translate(160, 720)`);
+        .attr("transform", `translate(100, 720)`);
 
     // 设置比例尺
     const xScale = d3.scaleBand()
@@ -97,21 +97,21 @@ function getAllPic(team) {
 
     // 添加图表标题
     svg.append("text")
-        .attr("x", 350)
+        .attr("x", 290)
         .attr("y", 690)
         .attr("text-anchor", "middle")
         .text("Test Title");
 
     // 添加X轴标签
     svg.append("text")
-        .attr("x", 500)
+        .attr("x", 440)
         .attr("y", 1130)
         .attr("text-anchor", "middle")
         .text("赔率种类");
 
     // 添加Y轴标签
     svg.append("text")
-        .attr("x", 160)
+        .attr("x", 100)
         .attr("y", 700)
         .attr("text-anchor", "middle")
         .text("数量");
@@ -120,4 +120,9 @@ function getAllPic(team) {
     teamData["plot_i"] = 5;
     drawODDPie(svg, teamData)
 
+    //6. 针对阿森纳使用不同投注策略的折线收益图
+    const chart_profit = svg.append("g")
+        .attr('transform', `translate(${430}, ${620})`)
+    drawProfitLine(chart_profit, dictData, team)
+    
 }
