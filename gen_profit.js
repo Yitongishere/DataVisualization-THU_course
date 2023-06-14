@@ -102,6 +102,16 @@ function drawProfitLine(svg, dictData, teamname) {
         svg.append('path').datum(round, profit_record).attr('fill', 'none')
         .attr('d', line).attr('stroke', color).attr('stroke-width', '3px');
 
+        const strategy_list = ['Expected','Unexpected','Middle']
+        const legend = svg.selectAll('text' + strategy)
+        .data(strategy_list)
+        .enter()
+        .append('text')
+        .attr('x', xScale(round[round.length - 1]) + 15)
+        .attr('y', yScale(profit_record[profit_record.length - 1]) - 15)
+        .style('fill', color)
+        .text(strategy)
+
         const labels = svg.append('text')
         .attr("text-anchor", "middle");
 
