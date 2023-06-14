@@ -78,33 +78,66 @@ function drawProfitLine(svg, dictData, teamname) {
         round.push(i)
     }
 
-    const line_expected = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_expected[i]))
-    svg.append('path').datum(round, profit_record_expected).attr('fill', 'none')
-    .attr('d', line_expected).attr('stroke', 'green').attr('stroke-width', '1px');
-    svg.selectAll("circle")
-    .data(profit_record_expected)
-    .enter()
-    .append("circle")
-    .attr("cx", function(d, i) { return xScale(round[i]) })
-    .attr("cy", function(d, i) { return yScale(profit_record_expected[i]) })
-    .attr("r", 2)
-    .attr("fill", "blue")
-    .on("mouseover", function(d) {
-        d3.select(this)
-            .attr("r", 4) // 鼠标悬停时增大圆点半径
-            .attr("fill", "red"); // 鼠标悬停时改变圆点颜色
-    })
-    .on("mouseout", function(d) {
-        d3.select(this)
-            .attr("r", 2)
-            .attr("fill", "blue");
-    });
+    draw_Lines("expected")
+    draw_Lines("unexpected")
+    draw_Lines("middle")
 
-    const line_unexpected = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_unexpected[i]))
-    svg.append('path').datum(round, profit_record_unexpected).attr('fill', 'none')
-    .attr('d', line_unexpected).attr('stroke', 'red').attr('stroke-width', '1px');
+    // const line_unexpected = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_unexpected[i]))
+    // svg.append('path').datum(round, profit_record_unexpected).attr('fill', 'none')
+    // .attr('d', line_unexpected).attr('stroke', 'red').attr('stroke-width', '1px');
 
-    const line_middle = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_middle[i]))
-    svg.append('path').datum(round, profit_record_middle).attr('fill', 'none')
-    .attr('d', line_middle).attr('stroke', 'orange').attr('stroke-width', '1px');
+    // const line_middle = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_middle[i]))
+    // svg.append('path').datum(round, profit_record_middle).attr('fill', 'none')
+    // .attr('d', line_middle).attr('stroke', 'orange').attr('stroke-width', '1px');
+
+    function draw_Lines(strategy) {
+        if (strategy == "expected") {
+            profit_record = profit_record_expected
+            color = 'green'
+        }
+        else if (strategy == "unexpected") {
+            profit_record = profit_record_unexpected
+            color = 'red'
+        }
+        else if (strategy == "middle") {
+            profit_record = profit_record_middle
+            color = 'orange'
+        }
+        
+        
+
+        const line = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record[i]))
+        svg.append('path').datum(round, profit_record).attr('fill', 'none')
+        .attr('d', line).attr('stroke', color).attr('stroke-width', '3px');
+
+        const labels = svg.append('text')
+        .attr("text-anchor", "middle");
+
+        const circles = svg.selectAll("circle")
+        .data(profit_record)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d, i) { return xScale(round[i]) })
+        .attr("cy", function(d, i) { return yScale(profit_record[i]) })
+        .attr("value", function(d, i) { return profit_record[i] })
+        .attr("r", 3)
+        .attr("fill", 'grey')
+        .on("mouseover", function(d) {
+            d3.select(this)
+                .attr("r", 6)
+                .attr("fill", "#98e7c2");
+
+            const x = parseFloat(d3.select(this).attr("cx"));
+            const y = parseFloat(d3.select(this).attr("cy")) - 10;
+            const value = parseFloat(+d3.select(this).attr("value"));
+
+            labels.attr('x', x).attr('y', y).attr('opacity', 1).text(Math.round(value))
+        })
+        .on("mouseout", function(d) {
+            d3.select(this)
+                .attr("r", 3)
+                .attr("fill", 'grey');
+            labels.attr('opacity', 0)
+        });
+    }
 }
