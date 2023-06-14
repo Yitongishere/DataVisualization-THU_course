@@ -82,14 +82,6 @@ function drawProfitLine(svg, dictData, teamname) {
     draw_Lines("unexpected")
     draw_Lines("middle")
 
-    // const line_unexpected = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_unexpected[i]))
-    // svg.append('path').datum(round, profit_record_unexpected).attr('fill', 'none')
-    // .attr('d', line_unexpected).attr('stroke', 'red').attr('stroke-width', '1px');
-
-    // const line_middle = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record_middle[i]))
-    // svg.append('path').datum(round, profit_record_middle).attr('fill', 'none')
-    // .attr('d', line_middle).attr('stroke', 'orange').attr('stroke-width', '1px');
-
     function draw_Lines(strategy) {
         if (strategy == "expected") {
             profit_record = profit_record_expected
@@ -113,7 +105,7 @@ function drawProfitLine(svg, dictData, teamname) {
         const labels = svg.append('text')
         .attr("text-anchor", "middle");
 
-        const circles = svg.selectAll("circle")
+        const circles = svg.selectAll("circle" + strategy)
         .data(profit_record)
         .enter()
         .append("circle")
