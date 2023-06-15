@@ -9,6 +9,7 @@
     <script src="gen_pie.js"></script>
     <script src="portal.js"></script>
     <script src="gen_profit.js"></script>
+    <script src="gen_bubble.js"></script>
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script> -->
     <link rel="stylesheet" href="d3-tip.css">
@@ -74,6 +75,7 @@
         <button id="btnE">按xx排序2</button>
         <button id="btnF">首页</button>
         <button id="btnG">test</button>
+        <button id="btnH">气泡图</button>
     </div>
 
     <div id="imgs">
@@ -170,6 +172,11 @@
         d3.select("#btnG").on("click", () => {
             svg.selectAll("*").remove();
             drawProfitLine(svg, dictData, "Arsenal", "expected")
+        });
+
+        d3.select("#btnH").on("click", () => {
+            svg.selectAll("*").remove();
+            drawBubble()
         });
     </script>
     <script src="team.js"></script>
