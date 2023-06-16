@@ -1,13 +1,6 @@
-const selectElement = document.getElementById("mySelect");
-
-selectElement.addEventListener("change", function() {
-    getAllPic(selectElement.value);
-});
-
-function getAllPic(team) {
+function getAllPic(teamData) {
     const svg = d3.select("svg");
     svg.selectAll("*").remove();
-    teamData = dictData[team];
     teamData["plot_i"] = 1;
     //1. 积分排名折线图(占位)
     svg.append("g")
@@ -123,6 +116,6 @@ function getAllPic(team) {
     //6. 针对阿森纳使用不同投注策略的折线收益图
     const chart_profit = svg.append("g")
         .attr('transform', `translate(${430}, ${620})`)
-    drawProfitLine(chart_profit, dictData, team)
-    
+    drawProfitLine(chart_profit, teamData)
+
 }

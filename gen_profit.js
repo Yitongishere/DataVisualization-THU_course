@@ -1,16 +1,23 @@
-function drawProfitLine(svg, dictData, teamname) {
-    // console.log(dictData[teamname]['date'])
-    // console.log(dictData[teamname]["winDetails"])
+function drawProfitLine(svg, teamData) {
 
-    const dates = dictData[teamname]['date']
+    const dates = teamData['date']
     let games = {}
-    dictData[teamname]["winDetails"].forEach((d, i) => { games[d.number] = d; games[d.number]['result'] = "win" })
-    dictData[teamname]["drawDetails"].forEach((d, i) => { games[d.number] = d; games[d.number]['result'] = "draw" })
-    dictData[teamname]["lossDetails"].forEach((d, i) => { games[d.number] = d; games[d.number]['result'] = "loss" })
+    teamData["winDetails"].forEach((d, i) => {
+        games[d.number] = d;
+        games[d.number]['result'] = "win"
+    })
+    teamData["drawDetails"].forEach((d, i) => {
+        games[d.number] = d;
+        games[d.number]['result'] = "draw"
+    })
+    teamData["lossDetails"].forEach((d, i) => {
+        games[d.number] = d;
+        games[d.number]['result'] = "loss"
+    })
 
     console.log(dates)
     console.log(games)
-    
+
     let capital_per_1 = 100
     let profit_record_expected = get_profit_record(capital_per_1, games, "expected")
     let profit_record_unexpected = get_profit_record(capital_per_1, games, "unexpected")
@@ -24,13 +31,11 @@ function drawProfitLine(svg, dictData, teamname) {
             odd_win = games[i]["avg_win"];
             odd_draw = games[i]["avg_draw"];
             odd_loss = games[i]["avg_loss"];
-            if (strategy == "expected") { odd = Math.min(odd_win, odd_draw, odd_loss) }
-            else if (strategy == "unexpected") { odd = Math.max(odd_win, odd_draw, odd_loss) }
-            else if (strategy == "middle") { odd = (odd_win + odd_draw + odd_loss - Math.min(odd_win, odd_draw, odd_loss) - Math.max(odd_win, odd_draw, odd_loss)).toFixed(2) }
+            if (strategy == "expected") { odd = Math.min(odd_win, odd_draw, odd_loss) } else if (strategy == "unexpected") { odd = Math.max(odd_win, odd_draw, odd_loss) } else if (strategy == "middle") { odd = (odd_win + odd_draw + odd_loss - Math.min(odd_win, odd_draw, odd_loss) - Math.max(odd_win, odd_draw, odd_loss)).toFixed(2) }
             selected_odds_1.push(odd)
         }
         console.log("selected_odds_1", selected_odds_1)
-        // （2）计算收益, 记录每轮结束后的累计收益
+            // （2）计算收益, 记录每轮结束后的累计收益
         let profits_acc_1 = []
         profits_acc_1 = profit_curve(games, selected_odds_1, capital_per_1, profits_acc_1)
         return profits_acc_1
@@ -40,19 +45,18 @@ function drawProfitLine(svg, dictData, teamname) {
             for (i = 0; i < selected_odds_1.length; i++) {
                 if (games[`${i+1}`]['result'].slice(-3) == findKey(games[`${i+1}`], selected_odds_1[i]).slice(-3)) {
                     profit = Math.round(capital_per_1 * (selected_odds_1[i] - 1))
-                }
-                else {
+                } else {
                     profit = -1 * capital_per_1
                 }
-            p_acc += profit
-            profits_acc_1.push(p_acc)
+                p_acc += profit
+                profits_acc_1.push(p_acc)
             }
             return profits_acc_1
         }
 
         function findKey(obj, value) {
             for (let k in obj) {
-                if (obj[k] == value) {return k}
+                if (obj[k] == value) { return k }
             }
         }
     }
@@ -60,7 +64,7 @@ function drawProfitLine(svg, dictData, teamname) {
     const xScale = d3.scaleLinear();
     const yScale = d3.scaleLinear();
 
-    xScale.domain([1,38]).range([100, 500]).nice();
+    xScale.domain([1, 38]).range([100, 500]).nice();
     yScale.domain([-2500, 2500]).range([500, 100]).nice();
     const xAxis = d3.axisBottom(xScale)
     const yAxis = d3.axisLeft(yScale);
@@ -74,7 +78,7 @@ function drawProfitLine(svg, dictData, teamname) {
     svg.append("text").attr("x", 100).attr("y", 80).attr("text-anchor", "middle").text("收益");
 
     round = []
-    for(i = 1; i <= dates.length; i++) {
+    for (i = 1; i <= dates.length; i++) {
         round.push(i)
     }
 
@@ -86,59 +90,57 @@ function drawProfitLine(svg, dictData, teamname) {
         if (strategy == "expected") {
             profit_record = profit_record_expected
             color = 'green'
-        }
-        else if (strategy == "unexpected") {
+        } else if (strategy == "unexpected") {
             profit_record = profit_record_unexpected
             color = 'red'
-        }
-        else if (strategy == "middle") {
+        } else if (strategy == "middle") {
             profit_record = profit_record_middle
             color = 'orange'
         }
-        
-        
+
+
 
         const line = d3.line().x((d, i) => xScale(round[i])).y((d, i) => yScale(profit_record[i]))
         svg.append('path').datum(round, profit_record).attr('fill', 'none')
-        .attr('d', line).attr('stroke', color).attr('stroke-width', '3px');
+            .attr('d', line).attr('stroke', color).attr('stroke-width', '3px');
 
         const legend = svg.selectAll('text' + strategy)
-        .data(strategy)
-        .enter()
-        .append('text')
-        .attr('x', xScale(round[round.length - 1]) + 15)
-        .attr('y', yScale(profit_record[profit_record.length - 1]) - 15)
-        .style('fill', color)
-        .text(strategy)
+            .data(strategy)
+            .enter()
+            .append('text')
+            .attr('x', xScale(round[round.length - 1]) + 15)
+            .attr('y', yScale(profit_record[profit_record.length - 1]) - 15)
+            .style('fill', color)
+            .text(strategy)
 
         const labels = svg.append('text')
-        .attr("text-anchor", "middle");
+            .attr("text-anchor", "middle");
 
         const circles = svg.selectAll("circle" + strategy)
-        .data(profit_record)
-        .enter()
-        .append("circle")
-        .attr("cx", function(d, i) { return xScale(round[i]) })
-        .attr("cy", function(d, i) { return yScale(profit_record[i]) })
-        .attr("value", function(d, i) { return profit_record[i] })
-        .attr("r", 3)
-        .attr("fill", 'grey')
-        .on("mouseover", function(d) {
-            d3.select(this)
-                .attr("r", 6)
-                .attr("fill", "#98e7c2");
+            .data(profit_record)
+            .enter()
+            .append("circle")
+            .attr("cx", function(d, i) { return xScale(round[i]) })
+            .attr("cy", function(d, i) { return yScale(profit_record[i]) })
+            .attr("value", function(d, i) { return profit_record[i] })
+            .attr("r", 3)
+            .attr("fill", 'grey')
+            .on("mouseover", function(d) {
+                d3.select(this)
+                    .attr("r", 6)
+                    .attr("fill", "#98e7c2");
 
-            const x = parseFloat(d3.select(this).attr("cx"));
-            const y = parseFloat(d3.select(this).attr("cy")) - 10;
-            const value = parseFloat(+d3.select(this).attr("value"));
+                const x = parseFloat(d3.select(this).attr("cx"));
+                const y = parseFloat(d3.select(this).attr("cy")) - 10;
+                const value = parseFloat(+d3.select(this).attr("value"));
 
-            labels.attr('x', x).attr('y', y).attr('opacity', 1).text(Math.round(value))
-        })
-        .on("mouseout", function(d) {
-            d3.select(this)
-                .attr("r", 3)
-                .attr("fill", 'grey');
-            labels.attr('opacity', 0)
-        });
+                labels.attr('x', x).attr('y', y).attr('opacity', 1).text(Math.round(value))
+            })
+            .on("mouseout", function(d) {
+                d3.select(this)
+                    .attr("r", 3)
+                    .attr("fill", 'grey');
+                labels.attr('opacity', 0)
+            });
     }
 }

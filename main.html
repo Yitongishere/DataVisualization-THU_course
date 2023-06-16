@@ -82,11 +82,6 @@
         <img style="margin: 10px;">
     </div>
 
-    <select id="mySelect">
-        <option value="Crystal Palace" selected>Crystal Palace</option>
-        <option value="Arsenal">Arsenal</option>
-        <option value="Fulham">Fulham</option>
-    </select>
 
     <script>
         size = 160;
@@ -95,89 +90,92 @@
         let listData;
         let dictData;
 
-        async function loadData() {
-            try {
-                dictData = await d3.json("data.json");
-                listData = Object.values(dictData);
-            } catch (error) {
-                console.error("读取数据失败:", error);
-            }
-        }
 
-        loadData();
+        d3.json("data.json").then(function(dictData) {
+            listData = Object.values(dictData);
+            const svg = d3.select("body")
+                .append("svg")
+                .attr("width", 1000)
+                .attr("height", 2500)
+                .attr("class", "svg");
 
-        const svg = d3.select("body")
-            .append("svg")
-            .attr("width", 1000)
-            .attr("height", 2500)
-            .attr("class", "svg");
+            init_button(svg);
+            var queryString = window.location.search;
+            var params = new URLSearchParams(queryString);
 
-        d3.select("#btnA").on("click", () => {
-            svg.selectAll("*").remove();
-            listData.forEach((d, i) => {
-                var plot_data = {
-                    ...d,
-                    plot_i: i,
-                };
-                drawWLDPie(svg, plot_data);
-            });
-        });
-
-        d3.select("#btnB").on("click", () => {
-            svg.selectAll("*").remove();
-            listData.forEach((d, i) => {
-                var plot_data = {
-                    ...d,
-                    plot_i: i,
-                };
-                drawODDPie(svg, plot_data);
-            });
-        });
-
-        d3.select("#btnC").on("click", () => {
-            svg.selectAll("*").remove();
-            listData.forEach((d, i) => {
-                var plot_data = {
-                    ...d,
-                    plot_i: i,
-                };
-                drawGoalPie(svg, plot_data);
-
-            });
-
-        });
-
-        d3.select("#btnD").on("click", () => {
-            // 假设有个方法返回了每个球队的排序
-            var order = [2, 19, 5, 18, 17, 7, 6, 15, 16, 8, 9, 3, 13, 14, 10, 11, 4, 12, 1, 0];
-            changeOrder(svg, order);
-        });
-        d3.select("#btnE").on("click", () => {
-            // 假设有个方法返回了每个球队的排序
-            var order = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
-            changeOrder(svg, order);
-        });
-
-        d3.select("#btnF").on("click", () => {
-            svg.selectAll("*").remove();
-            listData.forEach((d, i) => {
-                var plot_data = {
-                    ...d,
-                    plot_i: i,
-                };
-                showLogo(svg, plot_data, i)
-            });
+            // 获取 "?team=" 参数的值
+            var team = params.get('team');
+            getAllPic(dictData[team]);
         })
 
-        d3.select("#btnG").on("click", () => {
-            svg.selectAll("*").remove();
-            drawProfitLine(svg, dictData, "Arsenal", "expected")
-        });
+        function init_button(svg) {
+            d3.select("#btnA").on("click", () => {
+                svg.selectAll("*").remove();
+                listData.forEach((d, i) => {
+                    var plot_data = {
+                        ...d,
+                        plot_i: i,
+                    };
+                    drawWLDPie(svg, plot_data);
+                });
+            });
 
-        d3.select("#btnH").on("click", () => {
-            svg.selectAll("*").remove();
-            drawBubble(svg, dictData)
-        });
+            d3.select("#btnB").on("click", () => {
+                svg.selectAll("*").remove();
+                listData.forEach((d, i) => {
+                    var plot_data = {
+                        ...d,
+                        plot_i: i,
+                    };
+                    drawODDPie(svg, plot_data);
+                });
+            });
+
+            d3.select("#btnC").on("click", () => {
+                svg.selectAll("*").remove();
+                listData.forEach((d, i) => {
+                    var plot_data = {
+                        ...d,
+                        plot_i: i,
+                    };
+                    drawGoalPie(svg, plot_data);
+
+                });
+
+            });
+
+            d3.select("#btnD").on("click", () => {
+                // 假设有个方法返回了每个球队的排序
+                var order = [2, 19, 5, 18, 17, 7, 6, 15, 16, 8, 9, 3, 13, 14, 10, 11, 4, 12, 1, 0];
+                changeOrder(svg, order);
+            });
+            d3.select("#btnE").on("click", () => {
+                // 假设有个方法返回了每个球队的排序
+                var order = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+                changeOrder(svg, order);
+            });
+
+            d3.select("#btnF").on("click", () => {
+                svg.selectAll("*").remove();
+                listData.forEach((d, i) => {
+                    var plot_data = {
+                        ...d,
+                        plot_i: i,
+                    };
+                    showLogo(svg, plot_data, i)
+                });
+            })
+
+            d3.select("#btnG").on("click", () => {
+                svg.selectAll("*").remove();
+                drawProfitLine(svg, dictData, "Arsenal", "expected")
+            });
+
+            d3.select("#btnH").on("click", () => {
+                svg.selectAll("*").remove();
+                drawBubble(svg, dictData)
+            });
+        }
     </script>
     <script src="team.js"></script>
 
