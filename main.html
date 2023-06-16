@@ -10,6 +10,7 @@
     <script src="portal.js"></script>
     <script src="gen_profit.js"></script>
     <script src="gen_bubble.js"></script>
+    <script src="score_line.js"></script>
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script> -->
     <link rel="stylesheet" href="d3-tip.css">
@@ -85,7 +86,7 @@
         <button id="btnB">绘制赔率预期图</button>
         <button id="btnC">绘制射门转化率图</button>
         <button id="btnF">首页</button>
-        <button id="btnG">test</button>
+        <button id="btnG">积分排名折线图</button>
         <button id="btnH">气泡图</button>
     </div>
 
@@ -110,13 +111,13 @@
                 .attr("height", 2500)
                 .attr("class", "svg");
 
-            init_button(svg);
+            init_button(svg, listData);
             var queryString = window.location.search;
             var params = new URLSearchParams(queryString);
 
             // 获取 "?team=" 参数的值
             var team = params.get('team');
-            if(!team) {
+            if (!team) {
                 team = 'Leeds';
             }
             getAllPic(dictData[team]);
@@ -163,7 +164,7 @@
 
 
 
-        function init_button(svg) {
+        function init_button(svg, listData) {
             d3.select("#btnA").on("click", () => {
                 svg.selectAll("*").remove();
                 document.getElementById("mySelect").disabled = false;
@@ -202,6 +203,20 @@
 
             });
 
+            d3.select("#btnC").on("click", () => {
+                svg.selectAll("*").remove();
+                document.getElementById("mySelect").disabled = false;
+                listData.forEach((d, i) => {
+                    var plot_data = {
+                        ...d,
+                        plot_i: i,
+                    };
+                    drawGoalPie(svg, plot_data);
+
+                });
+
+            });
+
 
             d3.select("#btnF").on("click", () => {
                 window.location.href = `test.html`;
@@ -209,11 +224,13 @@
 
             d3.select("#btnG").on("click", () => {
                 svg.selectAll("*").remove();
-                drawProfitLine(svg, dictData, "Arsenal", "expected")
-            });
+                document.getElementById("mySelect").disabled = true;
+                drawScores(svg, listData, 1, 1);
+            })
 
             d3.select("#btnH").on("click", () => {
                 svg.selectAll("*").remove();
+                document.getElementById("mySelect").disabled = true;
                 drawBubble(svg, dictData)
             });
         }

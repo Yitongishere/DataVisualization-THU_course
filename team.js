@@ -1,11 +1,21 @@
 function getAllPic(teamData) {
     const svg = d3.select("svg");
     svg.selectAll("*").remove();
+
+    var now_x = 0;
+    var now_y = 0;
     teamData["plot_i"] = 1;
-    //1. 积分排名折线图(占位)
-    svg.append("g")
-        .attr('transform', `translate(${100}, ${100})`)
-    drawScores(svg, [teamData], 1, 1)
+    //1. 积分折线图(占位)
+    svg.append("text")
+        .attr("x", now_x + 500)
+        .attr("y", now_y + 100)
+        .attr("text-anchor", "middle")
+        .text("积分折线图")
+        .style("font-size", "28px");
+
+    score_group = svg.append("g")
+        .attr('transform', `translate(${now_x + 0}, ${now_y + 100})`)
+    drawScores(score_group, [teamData], 0, 0)
 
     //2. 胜率饼图(占位)
     svg.append("g")
@@ -13,10 +23,15 @@ function getAllPic(teamData) {
 
     //3. 射门转化率饼图
     teamData["plot_i"] = 3;
-    drawGoalPie(svg, teamData)
+    now_x = 0;
+    now_y = 600;
+    shot_group = svg.append("g")
+        .attr('transform', `translate(${now_x + 0}, ${now_y + 100})`)
+    drawGoalPie(shot_group, teamData)
 
     //4. 包含阿森纳的比赛的平均赔率柱状图
-    // console.log(teamData['smallOddAvg'], parseFloat(teamData['winOddAvg']), parseFloat(teamData['winOddAvg']).toFixed(4))
+    now_x = 30;
+    now_y = 1500;
     const data = {
         wins: parseFloat(teamData['winOddAvg'].toFixed(4)),
         losses: parseFloat(teamData['loseOddAvg'].toFixed(4)),
@@ -30,7 +45,7 @@ function getAllPic(teamData) {
 
     // 创建绘图区域
     const chart = svg.append("g")
-        .attr("transform", `translate(100, 720)`);
+        .attr("transform", `translate(${now_x}, ${now_y})`);
 
     // 设置比例尺
     const xScale = d3.scaleBand()
@@ -91,32 +106,49 @@ function getAllPic(teamData) {
 
     // 添加图表标题
     svg.append("text")
-        .attr("x", 290)
-        .attr("y", 690)
+        .attr("x", now_x + 150)
+        .attr("y", now_y - 20)
         .attr("text-anchor", "middle")
-        .text("Test Title");
+        // .style("font-size", "22px")
+        .text("每种竞猜的赔率");
 
     // 添加X轴标签
     svg.append("text")
-        .attr("x", 440)
-        .attr("y", 1130)
-        .attr("text-anchor", "middle")
-        .text("赔率种类");
-
-    // 添加Y轴标签
-    svg.append("text")
-        .attr("x", 100)
-        .attr("y", 700)
+        .attr("x", now_x + 10)
+        .attr("y", now_y - 20)
         .attr("text-anchor", "middle")
         .text("数量");
 
+    // 添加Y轴标签
+    svg.append("text")
+        .attr("x", now_x + 320)
+        .attr("y", now_y + 430)
+        .attr("text-anchor", "middle")
+        .text("赔率种类");
+
     //5. 阿森纳赛果与赛前赔率关系饼图
+    now_x = 0;
+    now_y = 600;
+    svg.append("text")
+        .attr("x", now_x + 160)
+        .attr("y", now_y + 430)
+        .attr("text-anchor", "middle")
+        .text("射门转化率");
+    odd_group = svg.append("g")
+        .attr('transform', `translate(${now_x + 0}, ${now_y + 100})`)
     teamData["plot_i"] = 5;
-    drawODDPie(svg, teamData)
+    drawODDPie(odd_group, teamData)
 
     //6. 针对阿森纳使用不同投注策略的折线收益图
+    now_x = 400;
+    now_y = 1300;
+    svg.append("text")
+        .attr("x", now_x + 400)
+        .attr("y", now_y - 270)
+        .attr("text-anchor", "middle")
+        .text("赛果与赛前赔率");
     const chart_profit = svg.append("g")
-        .attr('transform', `translate(${430}, ${620})`)
+        .attr('transform', `translate(${now_x + 0}, ${now_y + 100})`)
     drawProfitLine(chart_profit, teamData)
 
 }
