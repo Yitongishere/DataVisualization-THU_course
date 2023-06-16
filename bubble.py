@@ -55,6 +55,5 @@ with open('bubble.csv', 'w', newline='') as csv_file:
             if i == 0: diff_goal = '0'
             else: diff_goal = str(diff_goals[i-1])
             item += diff_goal
-            print(item)
 
-            writer.writerow([item.strip('"')])
+            writer.writerow(item.split(','))

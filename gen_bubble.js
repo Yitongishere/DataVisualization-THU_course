@@ -1,16 +1,4 @@
 async function drawBubble(svg, dictData) {
-    // let the_data = [1, 2, 3, 4, 5, 6]
-    // console.log(svg)
-    // svg.selectAll('text')
-    // .data(the_data)
-    // .enter()
-    // .append('text')
-    // .attr('x', 200)
-    // .attr('y', 200)
-    // .text((d, i) => {console.log(d, i); return `Hello ${d} + ${i}`})
-
-    // // preprocess the data
-    // console.log(dictData)
 
     const width = +svg.attr('width');
     const height = +svg.attr('height');
@@ -18,13 +6,13 @@ async function drawBubble(svg, dictData) {
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
     const picWidth = 720
-    const picHeight = 600
+    const picHeight = 900
     let xScale, yScale;
 
-    const xValue = d => +(d['累计净胜球'] + 1);  ////
-    const yValue = d => +(d['score'] + 1);  ////
-    const rValue = d => +(d['累计进球']) * 0.8;  ////
-    const keyValue = d => d['地区']
+    const xValue = d => +(d['diff_goals']);  ////
+    const yValue = d => +(d['score']);  ////
+    const rValue = d => +(d['goals']) * 0.4;  ////
+    const keyValue = d => d['teamname']
     
     // 设置动画过渡时间
     let aduration = 1000
@@ -140,23 +128,17 @@ async function drawBubble(svg, dictData) {
     const renderupdate = async function(seq, i){
         const g = d3.select('#maingroup');
 
-        d3.select('#date_text').text(`Round${i}`); ////
+        d3.select('#date_text').text(`Round${i-1}`); ////
 
         let transition = d3.transition().duration(aduration).ease(d3.easeLinear);
 
         let circleupdates = g.selectAll('circle').data(seq);
         let circleenters = circleupdates.enter().append('circle')
-        .attr('fill', d => color[d] )
+        .attr('fill', d => color[keyValue(d)] )
         .attr('opacity', .8)
-        .attr('cy', d => yScale((team, i) => seq[i].score))
+        .attr('cy', d => yScale(yValue(d)))
         .attr('cx', d => xScale(xValue(d))) 
         .attr('r', c => rValue(c));
-        // let circleenters = circleupdates.enter().append('circle')
-        // .attr('fill', d => color[d] )
-        // .attr('opacity', .8)
-        // .attr('cy', d => yScale(yValue(d)))
-        // .attr('cx', d => xScale(xValue(d))) 
-        // .attr('r', c => rValue(c));
 
         circleupdates.merge(circleenters).transition(transition)
         .attr('cy', d => yScale(yValue(d)))
@@ -179,26 +161,27 @@ async function drawBubble(svg, dictData) {
 
         await transition.end();
     }
-    console.log(dictData)
+
     
+    d3.csv('bubble.csv').then(async function(data){
+        
+        alldates = Array.from(new Set(data.map( datum => datum['round'])))
+        // console.log(alldates)
 
-    alldates = Array.from({length: dictData.Arsenal.date.length}, (_, index) => index + 1);
-    allteams = Array.from(Object.keys(dictData))
-    console.log(allteams)
-    // 建立sequential数组，并为每支球队占位
-    sequential = []
-    allteams.forEach(datum => {
-        sequential.push([])
-    });
-    // 将数据从data.json中抽取，填充该数组
-    allteams.forEach((team, i) => {
-        sequential[i] = dictData[team]
+        // 建立sequential数组，并为每支球队占位
+        sequential = []
+        alldates.forEach(datum => {
+            sequential.push([])
+        });
+        // 将数据从data.json中抽取，填充该数组
+        data.forEach(datum => {
+            sequential[alldates.indexOf(datum['round'])].push(datum)
+        })
+
+        renderinit()
+
+        for (let i = 1; i <= sequential.length; i++) {
+            await renderupdate(sequential[i], i)
+        }
     })
-
-    renderinit()
-
-    for (let i = 1; i <= dictData.Arsenal.date.length; i++) {
-        await renderupdate(sequential, i)
-    }
-
 }

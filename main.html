@@ -116,6 +116,9 @@
 
             // 获取 "?team=" 参数的值
             var team = params.get('team');
+            if(!team) {
+                team = 'Leeds';
+            }
             getAllPic(dictData[team]);
 
 
