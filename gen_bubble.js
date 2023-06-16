@@ -15,7 +15,7 @@ async function drawBubble(svg, dictData) {
     const keyValue = d => d['teamname']
     
     // 设置动画过渡时间
-    let aduration = 1000
+    let aduration = 500
     // 设置横纵轴label
     const xAxisLabel = '净胜球数';
     const yAxisLabel = '积分';
