@@ -29,6 +29,7 @@
     <div id="map-name"></div>
     <script>
         d3.json("wgs84.geojson").then(function(geodata) {
+            // d3.json("smaller.json").then(function(geodata) {
             d3.csv("data_HomeField.csv").then(function(teamloc) {
                 var geojson = geodata;
                 drawMap(geojson, teamloc);

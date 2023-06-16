@@ -5,6 +5,7 @@ function getAllPic(teamData) {
     //1. 积分排名折线图(占位)
     svg.append("g")
         .attr('transform', `translate(${100}, ${100})`)
+    drawScores(svg, [teamData], 1, 1)
 
     //2. 胜率饼图(占位)
     svg.append("g")
