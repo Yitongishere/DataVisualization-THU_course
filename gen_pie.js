@@ -175,7 +175,19 @@ function generatePieChart(svg, pieData, title = '', tx, ty, colors = ['#ff7f0e',
         // .attr("x", tx)
         // .attr("y", ty)
         .attr("text-anchor", "middle")
-        .text(title);
+        .text(title)
+        .on('click', function(d) {
+            window.location.href = `main.html?team=${title}`;
+        })
+        .on('mouseover', function(d) {
+            d3.select(this).attr('opacity', '0.5');
+            d3.select(this).style('font-size', '1.2em');
+            d3.select(this).style('cursor', 'pointer')
+        })
+        .on('mouseout', function(d) {
+            d3.select(this).attr('opacity', '1');
+            d3.select(this).style('font-size', '1em');
+        });
 
 
 

@@ -1,5 +1,5 @@
 function drawProfitLine(svg, teamData) {
-
+    // console.log(teamData)
     const dates = teamData['date']
     let games = {}
     teamData["winDetails"].forEach((d, i) => {
@@ -15,8 +15,8 @@ function drawProfitLine(svg, teamData) {
         games[d.number]['result'] = "loss"
     })
 
-    console.log(dates)
-    console.log(games)
+    // console.log(dates)
+    // console.log(games)
 
     let capital_per_1 = 100
     let profit_record_expected = get_profit_record(capital_per_1, games, "expected")
@@ -34,8 +34,8 @@ function drawProfitLine(svg, teamData) {
             if (strategy == "expected") { odd = Math.min(odd_win, odd_draw, odd_loss) } else if (strategy == "unexpected") { odd = Math.max(odd_win, odd_draw, odd_loss) } else if (strategy == "middle") { odd = (odd_win + odd_draw + odd_loss - Math.min(odd_win, odd_draw, odd_loss) - Math.max(odd_win, odd_draw, odd_loss)).toFixed(2) }
             selected_odds_1.push(odd)
         }
-        console.log("selected_odds_1", selected_odds_1)
-            // （2）计算收益, 记录每轮结束后的累计收益
+        // console.log("selected_odds_1", selected_odds_1)
+        // （2）计算收益, 记录每轮结束后的累计收益
         let profits_acc_1 = []
         profits_acc_1 = profit_curve(games, selected_odds_1, capital_per_1, profits_acc_1)
         return profits_acc_1

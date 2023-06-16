@@ -67,12 +67,23 @@
             transition: opacity 0.3s ease;
         }
     </style>
+    排序方式：
+    <select id="mySelect" disabled=true>
+        <option value="totalGoal">进球数</option>
+        <option value="wins">胜局数</option>
+        <option value="draws">平局数</option>
+        <option value="losses">败局数</option>
+        <option value="totalShot">射门数</option>
+        <option value="totalShotTarget">射正数</option>
+        <option value="ShotTargetRate">射正率</option>
+        <option value="GoalRate">进球率</option>
+        <option value="Score">总积分</option>
+
+    </select>
     <div id="buttons">
         <button id="btnA">绘制胜平负饼图</button>
         <button id="btnB">绘制赔率预期图</button>
         <button id="btnC">绘制射门转化率图</button>
-        <button id="btnD">按xx排序</button>
-        <button id="btnE">按xx排序2</button>
         <button id="btnF">首页</button>
         <button id="btnG">test</button>
         <button id="btnH">气泡图</button>
@@ -106,11 +117,53 @@
             // 获取 "?team=" 参数的值
             var team = params.get('team');
             getAllPic(dictData[team]);
+
+
+            document.getElementById("mySelect").addEventListener("change", sortBy);
+
+            function sortBy() {
+                var selectedOption = document.getElementById("mySelect").value;
+                var sortedData;
+
+                let labelData = listData;
+                for (var i = 0; i < labelData.length; i++) {
+                    labelData[i]['plot_i'] = i;
+                }
+
+                if (selectedOption == 'ShotTargetRate') {
+                    sortedData = labelData.slice().sort(function(a, b) {
+                        return d3.descending(a['totalShotTarget'] / a['totalShot'], b['totalShotTarget'] / b['totalShot']);
+                    });
+                } else
+                if (selectedOption == 'GoalRate') {
+                    sortedData = labelData.slice().sort(function(a, b) {
+                        return d3.descending(a['totalGoal'] / a['totalShot'], b['totalGoal'] / b['totalShot']);
+                    });
+                } else if (selectedOption == 'Score') {
+                    var total = 39;
+                    sortedData = labelData.slice().sort(function(a, b) {
+                        return d3.descending(a['score'][total - 1], b['score'][total - 1]);
+                    });
+                } else {
+                    sortedData = labelData.slice().sort(function(a, b) {
+                        return d3.descending(a[selectedOption], b[selectedOption]);
+                    });
+                }
+
+                var sortedIndices = sortedData.map(function(d, i) {
+                    return d['plot_i'];
+                });
+
+                changeOrder(svg, sortedIndices);
+            }
         })
+
+
 
         function init_button(svg) {
             d3.select("#btnA").on("click", () => {
                 svg.selectAll("*").remove();
+                document.getElementById("mySelect").disabled = false;
                 listData.forEach((d, i) => {
                     var plot_data = {
                         ...d,
@@ -122,6 +175,7 @@
 
             d3.select("#btnB").on("click", () => {
                 svg.selectAll("*").remove();
+                document.getElementById("mySelect").disabled = false;
                 listData.forEach((d, i) => {
                     var plot_data = {
                         ...d,
@@ -133,6 +187,7 @@
 
             d3.select("#btnC").on("click", () => {
                 svg.selectAll("*").remove();
+                document.getElementById("mySelect").disabled = false;
                 listData.forEach((d, i) => {
                     var plot_data = {
                         ...d,
@@ -144,26 +199,9 @@
 
             });
 
-            d3.select("#btnD").on("click", () => {
-                // 假设有个方法返回了每个球队的排序
-                var order = [2, 19, 5, 18, 17, 7, 6, 15, 16, 8, 9, 3, 13, 14, 10, 11, 4, 12, 1, 0];
-                changeOrder(svg, order);
-            });
-            d3.select("#btnE").on("click", () => {
-                // 假设有个方法返回了每个球队的排序
-                var order = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
-                changeOrder(svg, order);
-            });
 
             d3.select("#btnF").on("click", () => {
-                svg.selectAll("*").remove();
-                listData.forEach((d, i) => {
-                    var plot_data = {
-                        ...d,
-                        plot_i: i,
-                    };
-                    showLogo(svg, plot_data, i)
-                });
+                window.location.href = `test.html`;
             })
 
             d3.select("#btnG").on("click", () => {

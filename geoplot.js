@@ -1,7 +1,7 @@
 let projection;
 let svg;
 const width = 1000;
-const height = 3000;
+const height = 1000;
 
 function drawMap(geojson, teamloc) {
     svg = d3.select("#map").on("click", function(event, d) {
@@ -44,7 +44,7 @@ function drawMap(geojson, teamloc) {
         .attr("y", 100)
         .attr("width", width)
         .attr("height", height)
-        .attr('transform', `translate (0, 0) scale(1.5)`);
+        .attr('transform', `translate (0, 0) scale(3)`);
 
     svg.selectAll("path")
         .data(geojson.features)
@@ -113,9 +113,9 @@ function showTeamInfo(d) {
         }
         teams_logo = svg.append("svg:image")
             .attr('x', 600)
-            .attr('y', 400)
-            .attr('width', 200)
-            .attr('height', 200)
+            .attr('y', 300)
+            .attr('width', 400)
+            .attr('height', 400)
             .attr("xlink:href", `./Logo/${teamData['Team']}.png`)
             .on('click', function(d) {
                 window.location.href = `main.html?team=${teamData['Team']}`;
