@@ -128,7 +128,7 @@ async function drawBubble(svg, dictData) {
     const renderupdate = async function(seq, i){
         const g = d3.select('#maingroup');
 
-        d3.select('#date_text').text(`Round${i-1}`); ////
+        d3.select('#date_text').text(`Round${i}`); ////
 
         let transition = d3.transition().duration(aduration).ease(d3.easeLinear);
 
@@ -180,7 +180,7 @@ async function drawBubble(svg, dictData) {
 
         renderinit()
 
-        for (let i = 1; i <= sequential.length; i++) {
+        for (let i = 0; i < sequential.length; i++) {
             await renderupdate(sequential[i], i)
         }
     })
