@@ -30,8 +30,6 @@ function drawMap(geojson, teamloc) {
 
     projection = d3.geoMercator().fitSize([800, 600], geojson);
     const path = d3.geoPath().projection(projection);
-    const screenCoordinates = teamloc.map(d => projection([parseFloat(-d.Longitude), parseFloat(d.Latitude)]));
-    // console.log(screenCoordinates)
 
     const pattern = svg.append("defs")
         .append("pattern")
@@ -97,14 +95,18 @@ function showTeamInfo(d) {
         var y = 200;
         for (var key in teamData) {
             if (teamData.hasOwnProperty(key)) {
-                // 创建文本元素
-                text_group.append("text")
+                var text = text_group.append("text")
                     .style('font-size', '2em')
                     .attr("x", 10)
                     .attr("y", y)
-                    .text(key + ": " + teamData[key]);
 
-                // 增加y坐标以进行下一行文本
+                text.append("tspan")
+                    .text(key)
+                    .style("font-weight", "bold");
+
+                text.append("tspan")
+                    .text(": " + teamData[key]);
+
                 y += 50;
 
             }
@@ -167,8 +169,8 @@ function onClick(event, d) {
             d3.select(this)
                 .attr('scale', 1)
                 .transition()
-                .duration(500) // 动画持续时间
-                .attr("transform", "translate(-300, -300)"); // 设置图块的新位置
+                .duration(500)
+                .attr("transform", "translate(-300, -300)");
         });
     const svg = d3.select("#map");
     svg.selectAll("#map-name").remove();
@@ -177,32 +179,27 @@ function onClick(event, d) {
     const clickedPath = d3.select(this);
 
 
-    // 计算移动的偏移量和缩放比例
+
     const totalLength = clickedPath.node().getTotalLength();
     const currentPosition = clickedPath.node().getPointAtLength(totalLength);
-    const translateX = 400 - currentPosition.x;
-    const translateY = 300 - currentPosition.y;
 
-    // 获取路径的边界框
     const bounds = clickedPath.node().getBBox();
     const allCircles = d3.selectAll("circle")
         .attr('opacity', 0.2);
     const circles = allCircles.filter(function(circleData) {
-        // const point = [circleData[0], circleData[1]];
         const point = [-circleData.Longitude, circleData.Latitude];
         return d3.geoContains(clickedPath.datum(), point);
     });
 
-    // 计算路径的中心点
     const center = [
-        bounds.x + 0.5 * bounds.width, // 中心点的经度
-        bounds.y + 0.5 * bounds.height // 中心点的纬度
+        bounds.x + 0.5 * bounds.width,
+        bounds.y + 0.5 * bounds.height
     ];
 
-    // 指定放大的比例
-    const scale = 5; // 以2倍放大为例
 
-    // 进行缩放变换
+    const scale = 5;
+
+
     const transform = `translate(${bounds.width / 2},${bounds.height / 2}) scale(${scale}) translate(${200/scale-center[0]},${400/scale-center[1]})`;
 
     svg
@@ -227,9 +224,7 @@ function onClick(event, d) {
         .attr('r', 1)
         .attr('transform', transform)
 
-    const label = d3.select("#label");
 
-    // 获取路径的名称
 
     const name = clickedPath.data()[0].properties.Name;
 
