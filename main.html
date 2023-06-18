@@ -146,6 +146,7 @@
                 } else if (selectedOption == 'Score') {
                     var total = 39;
                     sortedData = labelData.slice().sort(function(a, b) {
+                        // console.log(a['score'])
                         return d3.descending(a['score'][total - 1], b['score'][total - 1]);
                     });
                 } else {
@@ -154,11 +155,12 @@
                     });
                 }
 
+
+
                 var sortedIndices = sortedData.map(function(d, i) {
                     return d['plot_i'];
                 });
-
-                changeOrder(svg, sortedIndices);
+                changeOrderTeam(svg, sortedIndices);
             }
         })
 

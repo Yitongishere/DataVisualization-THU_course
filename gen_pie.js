@@ -345,3 +345,23 @@ function changeOrder(svg, newOrder, size = 160, width = 1000) {
             return 'translate(' + x + ',' + y + ')';
         });
 }
+
+function changeOrderTeam(svg, newOrder, size = 160, width = 1000) {
+    pies = d3.selectAll('.pie');
+    var duration = 1000; // 动画持续时间（毫秒）
+
+    pies.transition()
+        .duration(duration)
+        .attr('transform', function(d, i) {
+
+            var ret = newOrder.indexOf(i);
+
+            pos = calculatePosition(ret, size, width);
+            x = pos['x'];
+            y = pos['y'];
+            // console.log(d3.select(this).attr('transform'), newOrder[i], 'translate(' + x + ', ' + y + ')')
+
+            return 'translate(' + x + ',' + y + ')';
+        });
+    // console.log("-------------")
+}

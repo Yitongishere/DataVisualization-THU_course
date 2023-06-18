@@ -28,6 +28,14 @@ function drawMap(geojson, teamloc) {
         }
     });
 
+    svg.append('text')
+        .attr('class', 'tooltip-text')
+        .attr('dx', 150)
+        .attr('dy', 800)
+        .style('font-family', 'Lato')
+        .style('font-size', '4em')
+        .text(`英超联赛球队地理分布图`)
+
     projection = d3.geoMercator().fitSize([800, 600], geojson);
     const path = d3.geoPath().projection(projection);
 
